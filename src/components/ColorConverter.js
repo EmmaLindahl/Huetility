@@ -1,6 +1,19 @@
 import "./ColorConverter.css";
 import { useState, useEffect } from "react";
 
+//TODO change RGB input:
+//don't run code if there's less than 2 commas
+//insert a new comma when 3 numbers are given
+//Not have cursor jump to the back
+
+//Person should be able to delete commmas (don't stay in one "comma-field" when deleting numbers)
+//Person should be able to write commas
+//Person should be able to make space empty
+
+//example:
+//116,170,214 -> be able to delete to this: 116,17
+//116,170,214 -> be able to delete to blank:  -> then start write: 15 (and not have it automatically filled with 0 or NaN)
+
 function ColorConverter() {
   const [RGBValue, setRGBValue] = useState([116, 170, 214]);
   const [HEXValue, setHEXValue] = useState("#74aad6");
@@ -12,8 +25,17 @@ function ColorConverter() {
     const inputValues = event.target.value
       .split(",")
       .map(Number)
+      .filter((value) => !isNaN(value) && value !== "")
       .map(RGBConverter);
-    setRGBValue(inputValues);
+
+    if (inputValues.length === 3) {
+      const inputElement = event.target;
+      const start = inputElement.selectionStart;
+      setRGBValue(inputValues);
+      setTimeout(() => {
+        inputElement.setSelectionRange(start, start);
+      }, 0);
+    }
   }
 
   //set HEX-value when you write in form
@@ -100,7 +122,7 @@ function ColorConverter() {
       <p>Enter a value to convert it to RGB or HEX.</p>
       <br />
       <form>
-        <div className="converterContainer">
+        <form className="converterContainer">
           <div className="input-wrapper">
             <label for="RGB">RGB</label>
             <input
@@ -121,7 +143,7 @@ function ColorConverter() {
               onChange={handleHEXChange}
             ></input>
           </div>
-        </div>
+        </form>
       </form>
       <div
         className="colorBox"

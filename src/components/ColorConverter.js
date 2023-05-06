@@ -20,9 +20,30 @@ function ColorConverter() {
   const [colorIndex, setColorIndex] = useState(0);
   const colors = ["#ff0000", "#00ff00", "#0000ff"];
 
+  function checkCorrectRGB(val) {
+    return /^\d{1,3},\d{1,3},\d{1,3}$/.test(val);
+  }
+
+  function checkCorrectHEX(val) {
+    return /^#[0-9A-Fa-f]{6,6}$/.test(val);
+  }
+
   //set RGB-value when you write in form
   function handleRGBChange(event) {
-    const inputValues = event.target.value
+    let newValue = event.target.value;
+
+    if (/^,/.test(newValue)) {
+      newValue = "0" + newValue;
+    } else if (/^\d{1,3},,\d{1,3}/.test(newValue)) {
+      newValue = newValue.replace(",,", ",0,");
+    } else if (/^\d{1,3},\d{1,3},$/.test(newValue)) {
+      newValue = newValue + "0";
+    }
+
+    //Terminate if RGB is Wrong
+    if (!checkCorrectRGB(newValue)) return;
+
+    const inputValues = newValue
       .split(",")
       .map(Number)
       .filter((value) => !isNaN(value) && value !== "")
@@ -40,7 +61,20 @@ function ColorConverter() {
 
   //set HEX-value when you write in form
   function handleHEXChange(event) {
-    const inputValues = event.target.value;
+    let inputValues = event.target.value;
+
+    inputValues = inputValues.replaceAll(/[^0-9A-Fa-f#]/gm, "");
+
+    if (inputValues.length == 0) {
+      inputValues += "#";
+    } else if (!/^#/.test(inputValues)) {
+      inputValues = inputValues.replace("#", "");
+      inputValues = "#" + inputValues;
+    }
+    if (inputValues.length > 7) {
+      return;
+    }
+
     setHEXValue(inputValues);
   }
 
@@ -57,6 +91,9 @@ function ColorConverter() {
 
   //set RGB-value when HEX change
   useEffect(() => {
+    if (!checkCorrectHEX(HEXValue)) {
+      return;
+    }
     const RGBValues = hexToRgb(HEXValue);
     const newRGBValue = RGBValues.map((element) => {
       return RGBConverter(element);
@@ -138,6 +175,7 @@ function ColorConverter() {
             <input
               type="text"
               id="HEX"
+              className={checkCorrectHEX(HEXValue) ? "" : "error"}
               name="HEX"
               value={`${HEXValue}`}
               onChange={handleHEXChange}

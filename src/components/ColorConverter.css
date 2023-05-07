@@ -1,5 +1,5 @@
 .hueBox {
-  margin: 100px;
+  margin: 100px 0;
   padding-top: 10px;
   padding-bottom: 40px;
   padding-left: 20px;
@@ -47,8 +47,9 @@ input {
   border: 1px solid gray;
   border-radius: 3px;
   position: relative;
-  width: 150px;
+  width: 140px;
   padding-top: 15px;
+  padding-left: 10px;
   padding-bottom: 5px;
 }
 

@@ -32,7 +32,9 @@ function ColorConverter() {
   function handleRGBChange(event) {
     let newValue = event.target.value;
 
-    if (/^,/.test(newValue)) {
+    if (/^$/.test(newValue)) {
+      newValue = "0,0,0";
+    } else if (/^,/.test(newValue)) {
       newValue = "0" + newValue;
     } else if (/^\d{1,3},,\d{1,3}/.test(newValue)) {
       newValue = newValue.replace(",,", ",0,");
